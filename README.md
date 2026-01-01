@@ -17,7 +17,7 @@ Google OAuth2 Provider
 
 ## 🚀 Tech Stack
 
-- **Java**: 17
+- **Java**: 21
 - **Spring Boot**: 3.5.9
 - **Spring Security**: 6.x
 - **OAuth2 Client**: Google Provider
@@ -172,40 +172,6 @@ server:
 7. **사용자 정보 조회** → Google UserInfo API 호출
 8. **인증 완료** → 세션 생성 및 `/`로 리다이렉트
 
-## 🐞 Troubleshooting
-
-### 1. redirect_uri_mismatch 에러
-
-**원인**: Google OAuth2 Console에 등록한 Redirect URI와 실제 요청 URI가 일치하지 않음
-
-**해결**:
-- Google Cloud Console에서 Redirect URI 확인:
-  ```
-  http://localhost/login/oauth2/code/google
-  ```
-- `application.yml`의 `forward-headers-strategy: framework` 설정 확인
-- Nginx의 `proxy_set_header` 설정 확인
-
-### 2. 무한 리다이렉트 루프
-
-**원인**: `/login` 페이지에 대한 접근 권한이 없어서 계속 리다이렉트됨
-
-**해결**:
-- `SecurityConfig.java`에서 `.requestMatchers("/login").permitAll()` 확인
-
-### 3. 환경변수 인식 실패
-
-**원인**: `.env` 파일이 없거나 잘못된 형식
-
-**해결**:
-```bash
-# .env 파일 확인
-cat .env
-
-# Docker Compose 재시작
-docker-compose down
-docker-compose up --build
-```
 
 ## 📝 License
 
