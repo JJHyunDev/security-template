@@ -1,15 +1,20 @@
+// Spring Boot + OAuth2 Boilerplate
+// Role: Gradle 빌드 설정 및 필수 의존성 정의
+// Complexity: OAuth2 로그인을 위해 Security, OAuth2 Client, Thymeleaf 의존성이 필요
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.9'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
-group = 'com.bell_hyun'
+group = 'com.example'
 version = '0.0.1-SNAPSHOT'
-description = 'security-template'
+description = 'Spring Boot OAuth2 Template with Nginx'
 
 java {
     toolchain {
+        // Java 21 사용 (Spring Boot 3.x 호환)
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
@@ -19,8 +24,24 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
+    // Spring Boot Web (REST API 및 웹 애플리케이션)
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Spring Security (인증/인가)
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // OAuth2 Client (Google OAuth2 로그인)
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // Thymeleaf (HTML 템플릿 엔진)
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    // Lombok (로깅)
+    implementation 'org.projectlombok:lombok'
+
+    // Test dependencies
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 

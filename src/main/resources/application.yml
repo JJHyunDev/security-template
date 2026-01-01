@@ -1,0 +1,50 @@
+# Spring Boot OAuth2 Application Configuration
+# Role: OAuth2 클라이언트 설정 및 Nginx 프록시 환경 대응
+# Complexity: Nginx를 통해 접근할 때 OAuth2 redirect URI가 올바르게 생성되도록 forwarded headers 전략 설정
+
+spring:
+  application:
+    name: oauth2-template
+
+  # OAuth2 Client Configuration
+  # Role: Google OAuth2 로그인 제공자 설정
+  # Complexity: client-id와 client-secret은 환경변수로 주입받아 보안 강화
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            # Google Cloud Console에서 발급받은 Client ID
+            # 환경변수: GOOGLE_CLIENT_ID (docker-compose.yml에서 주입)
+            client-id: ${GOOGLE_CLIENT_ID}
+
+            # Google Cloud Console에서 발급받은 Client Secret
+            # 환경변수: GOOGLE_CLIENT_SECRET (docker-compose.yml에서 주입)
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+
+            # OAuth2 scope (프로필 정보 및 이메일 접근 권한)
+            scope:
+              - profile
+              - email
+
+
+# Server Configuration
+# Role: 내부 포트 설정 및 Nginx 프록시 헤더 인식 전략
+# Complexity: Nginx가 전달한 X-Forwarded-* 헤더를 Spring이 인식하여
+#             OAuth2 redirect URI를 http://localhost:80/login/oauth2/code/google 형태로 생성
+server:
+  port: 8080
+
+  # Forwarded Headers Strategy
+  # Role: Nginx가 전달한 X-Forwarded-Proto, X-Forwarded-Host 헤더를 신뢰하고 사용
+  # Complexity:
+  #   - 'framework': Spring Framework의 ForwardedHeaderFilter를 사용하여 헤더 처리
+  #   - OAuth2 redirect URI 생성 시 클라이언트가 접근한 원본 주소(http://localhost:80)를 기준으로 생성
+  #   - 이 설정이 없으면 Spring Boot는 내부 주소(http://spring-boot:8080)로 redirect URI를 생성하여 OAuth2 콜백 실패
+  forward-headers-strategy: framework
+
+# Logging (개발용, 프로덕션에서는 레벨 조정 필요)
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG

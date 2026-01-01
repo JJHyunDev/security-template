@@ -1,0 +1,35 @@
+services:
+  # Nginx: Reverse Proxy
+  # Role: 외부 요청(80 포트)을 받아 Spring Boot(8080)로 프록시
+  # Complexity: OAuth2 redirect URI가 정상 작동하려면 forwarded headers를 올바르게 설정해야 함
+  nginx:
+    image: nginx:alpine
+    container_name: oauth-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - spring-boot
+    networks:
+      - oauth-network
+
+  # Spring Boot Application
+  # Role: OAuth2 로그인 처리 및 비즈니스 로직 수행
+  # Complexity: 외부에 직접 노출되지 않고 Nginx를 통해서만 접근 가능
+  spring-boot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: oauth-spring-boot
+    environment:
+      # Google OAuth2 Credentials (환경변수로 주입)
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+    networks:
+      - oauth-network
+    # 8080 포트는 외부에 노출하지 않음 (Nginx와 내부 네트워크로만 통신)
+
+networks:
+  oauth-network:
+    driver: bridge
