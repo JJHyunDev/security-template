@@ -6,13 +6,33 @@ spring:
   application:
     name: oauth2-template
 
+  # JPA 설정
+  jpa:
+    hibernate:
+      ddl-auto: update  # 개발: update, 프로덕션: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  # H2 Database (개발용, 프로덕션에서는 MySQL/PostgreSQL 사용 권장)
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true  # H2 콘솔: http://localhost:8080/h2-console
+
   # OAuth2 Client Configuration
-  # Role: Google OAuth2 로그인 제공자 설정
+  # Role: Google, Kakao 등 여러 OAuth2 Provider 설정
   # Complexity: client-id와 client-secret은 환경변수로 주입받아 보안 강화
   security:
     oauth2:
       client:
         registration:
+          # ===== Google OAuth2 Provider =====
           google:
             # Google Cloud Console에서 발급받은 Client ID
             # 환경변수: GOOGLE_CLIENT_ID (docker-compose.yml에서 주입)
@@ -26,6 +46,53 @@ spring:
             scope:
               - profile
               - email
+
+          # ===== Kakao OAuth2 Provider =====
+          # Kakao Developers Console: https://developers.kakao.com/
+          kakao:
+            # Kakao REST API 키
+            # 환경변수: KAKAO_CLIENT_ID (선택사항)
+            client-id: ${KAKAO_CLIENT_ID}
+
+            # Kakao Client Secret (보안 강화 시 사용, 선택사항)
+            # 환경변수: KAKAO_CLIENT_SECRET (선택사항)
+            client-secret: ${KAKAO_CLIENT_SECRET}
+
+            # Redirect URI (Custom Provider는 필수 설정)
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+
+            # OAuth2 인가 방식
+            authorization-grant-type: authorization_code
+
+            # Kakao는 Client ID/Secret을 Body에 담아 보내는 방식을 사용해야 함 (기본값은 Basic Auth Header)
+            client-authentication-method: client_secret_post
+
+            # Kakao OAuth2 scope
+            # profile_nickname: 닉네임 접근
+            # account_email: 이메일 접근 (사용자 동의 필요)
+            scope:
+              - profile_nickname
+              - profile_image
+              - account_email
+
+            # Provider 표시 이름
+            client-name: Kakao
+
+        # ===== Provider 설정 (Kakao는 수동 설정 필요) =====
+        provider:
+          kakao:
+            # Kakao OAuth2 인가 엔드포인트
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+
+            # Kakao OAuth2 토큰 엔드포인트
+            token-uri: https://kauth.kakao.com/oauth/token
+
+            # Kakao 사용자 정보 엔드포인트
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+
+            # 사용자 이름을 가져올 attribute key
+            # Kakao는 "id" 필드를 사용자 식별자로 사용
+            user-name-attribute: id
 
 
 # Server Configuration

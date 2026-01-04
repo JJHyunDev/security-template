@@ -26,6 +26,18 @@ services:
       # Google OAuth2 Credentials (환경변수로 주입)
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      # Kakao OAuth2 Credentials (환경변수로 주입)
+      KAKAO_CLIENT_ID: ${KAKAO_CLIENT_ID}
+      KAKAO_CLIENT_SECRET: ${KAKAO_CLIENT_SECRET}
+      # [Debug 설정]
+      # *:5005 -> 모든 네트워크 인터페이스에서 5005 포트 접속 허용
+      # suspend=n -> 디버거 연결을 기다리지 않고 즉시 앱 실행 (y로 하면 연결될 때까지 대기)
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+
+    ports:
+      # 호스트의 5005 포트를 컨테이너의 5005 포트와 연결
+      - "5005:5005"
+
     networks:
       - oauth-network
     # 8080 포트는 외부에 노출하지 않음 (Nginx와 내부 네트워크로만 통신)

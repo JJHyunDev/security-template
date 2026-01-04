@@ -134,11 +134,11 @@
         <div class="info-section">
             <div class="info-item">
                 <span class="info-label">인증 방식:</span>
-                <span class="info-value">Google OAuth 2.0</span>
+                <span class="info-value" th:text="${provider} + ' OAuth 2.0'">OAuth 2.0</span>
             </div>
             <div class="info-item">
                 <span class="info-label">Provider:</span>
-                <span class="info-value">Google</span>
+                <span class="info-value" th:text="${provider}">Provider</span>
             </div>
             <div class="info-item">
                 <span class="info-label">Architecture:</span>
