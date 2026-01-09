@@ -2,6 +2,8 @@ package com.example.oauth;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 /**
  * Spring Boot OAuth2 Application Main Class
@@ -27,6 +29,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *    - OAuth2AuthorizedClientRepository, OAuth2AuthorizedClientService 등 OAuth2 관련 빈이 자동 생성됨
  */
 @SpringBootApplication
+@ConfigurationPropertiesScan
 public class OAuthApplication {
 
     /**
